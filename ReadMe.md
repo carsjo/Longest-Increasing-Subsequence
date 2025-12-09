@@ -1,21 +1,28 @@
-# How to run
-These instructions assume that you already have installed Visual Studio 2022 (any edition) and .net 8 sdk.
-They also assume you have some familiarity in cloning from a git-repository.
-You can choose either suboption a or b depending which you find easier.
+# How to test
+These instructions assume that you already have installed .Net 8 SDK.
+They also assume you have knowledge of cloning from a git-repository.
 
-1. Clone the solution using git commands from command prompt or your favorite visual git tool to a folder of your choise, a good idea is to clone it somewhere shallow in the folder structure so it's easy to find.
-2. Open Visual Studio, in the menu bar, click "File" and "Open" then "Project/Solution", navigate to this solution (LIS.sln) and double click it or double click on the solution file (LIS.sln) using the file explorer.
+## Code coverage
+1. Clone the project
+2. Open a terminal or command prompt.
+3. Navigate to the solution directory.
+4. Run the following command to test the project:
 
-a) 
-    1. In Visual Studio, in the menu bar, click "View" and then "Test Explorer".
-    2. Locate the "Test explorer", if you have it docked or as a separate popup.
-    3. Click the "fast forward" button/icon (Run all tests in view) or if you know the keyboard shortcut please use that.
-       <img src="./test-explorer.png" />
+```bash
+dotnet test /p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line /p:ThresholdStat=total /p:CoverletOutput=../cobertura.json
+```
 
-b)
-    1. In Visual Studio, if you do not have the "Solution Explorer" open, go to the menu bar and click "View" and then "Solution Explorer".
-    2. Locate the "Solution Explorer", if you have it docked or as a separate popup.
-    3. Expand the "LIS.Tests" project and right click on the "UnitTests.cs" file, then click "Run tests"
-       <img src="./run-tests.png" />
+This command will execute the tests and collect code coverage information, ensuring that at least 90% of line coverage is enforced.
 
-4. The tests should run and give a pass result
+## Code coverage report
+If you want a complete code coverage report you can execute the following commands in the solution directory:
+
+```bash
+dotnet tool restore
+
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=../cobertura.xml
+
+dotnet tool run reportgenerator -reports:./cobertura.xml -targetdir:coveragereport -reporttypes:Html
+```
+
+After these commands you should be able to open `./coveragereport/index.htm(l)` to view complete code coverage information.
