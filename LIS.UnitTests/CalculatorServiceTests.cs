@@ -1,3 +1,4 @@
+using LIS.Domain.Abstractions;
 using LIS.Domain.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -27,6 +28,14 @@ public sealed class CalculatorServiceTests : MockTestBase<CalculatorService>
         AssertThatLogShouldHave(LogLevel.Warning, "Empty string array", Times.Once());
     }
     
+    [Fact]
+    public void ComputeLongestIncreasingSubsequence_WhenGivenEmptyString_ShouldReturnEmptyArray()
+    {
+        var actual = _sut.ComputeLongestIncreasingSubsequence(string.Empty);
+        
+        Assert.Equal(0, actual.Count);
+    }
+    
     [Theory]
     [InlineData("1 2 b")]
     [InlineData("1 2 3.5")]
@@ -37,8 +46,26 @@ public sealed class CalculatorServiceTests : MockTestBase<CalculatorService>
 
         Assert.Equal(0, actual.Count);
 
-        AssertThatLogShouldHave(LogLevel.Error, "An exception occured during calculation", Times.Once());
+        AssertThatLogShouldHave(LogLevel.Error, "Input string array contained invalid integer values.", Times.Once());
     }
+    
+    [Fact]
+    public void ComputeLongestIncreasingSubsequence_WhenUnexpectedErrorOccurs_ShouldReturnEmptyArray()
+    {
+        var mockStringConverterService = new Mock<IStringConverterService>();
+        mockStringConverterService
+            .Setup(x => x.ParseStringToStringArray(It.IsAny<string?>()))
+            .Throws<ArgumentOutOfRangeException>();
+        
+        var sut = new CalculatorService(MockLogger, mockStringConverterService.Object);
+
+        var actual = sut.ComputeLongestIncreasingSubsequence("1 2 3");
+
+        Assert.Equal(0, actual.Count);
+
+        AssertThatLogShouldHave(LogLevel.Error, "An exception occured during calculation.", Times.Once());
+    }
+   
 
     [Theory]
     [InlineData("6 1 5 9 2", new[]

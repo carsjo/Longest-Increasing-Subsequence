@@ -1,4 +1,4 @@
-using LIS.Domain.Interfaces;
+using LIS.Domain.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace LIS.Domain.Services;

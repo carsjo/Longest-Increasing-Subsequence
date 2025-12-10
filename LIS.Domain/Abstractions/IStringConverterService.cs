@@ -1,4 +1,4 @@
-namespace LIS.Domain.Interfaces;
+namespace LIS.Domain.Abstractions;
 
 public interface IStringConverterService
 {
